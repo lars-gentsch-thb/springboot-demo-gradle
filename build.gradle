@@ -1,0 +1,56 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.1.5'
+	id 'io.spring.dependency-management' version '1.1.3'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test', Test) {
+	useJUnitPlatform()
+	include '**/*Test*'
+	exclude '**/*IT*', '**/*ST*'
+	testLogging {
+		events "PASSED", "SKIPPED", "FAILED"
+		showStandardStreams = true
+	}
+}
+
+tasks.register('integrationTest', Test) {
+	useJUnitPlatform()
+	include '**/*IT*'
+	exclude '**/*Test*', '**/*ST*'
+	testLogging {
+		events "PASSED", "SKIPPED", "FAILED"
+		showStandardStreams = true
+	}
+}
+
+tasks.register('systemTest', Test) {
+	useJUnitPlatform()
+	include '**/*ST*'
+	exclude '**/*Test*', '**/*IT*'
+	testLogging {
+		events "PASSED", "SKIPPED", "FAILED"
+		showStandardStreams = true
+	}
+}
+
+tasks.named('check') {
+	dependsOn 'integrationTest', 'systemTest'
+}
+
